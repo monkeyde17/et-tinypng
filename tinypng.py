@@ -6,7 +6,9 @@ import json
 import threading
 import os
 
-key = "tyaaLBrU4fNVgiUT0b-HBWijI6AqWzuY"
+
+key = "input your key at etiny.cfg"
+
 outputdir = "ettinypng"
 
 class shrink_thread(threading.Thread):
@@ -62,6 +64,16 @@ def shrink_png_by_path(path):
     else:
         print "The path is invalid"
 
+def load_config():
+    import ConfigParser
+    global key
+
+    config = ConfigParser.RawConfigParser()
+    config.read("etiny.cfg")
+    key = config.get("etiny", "key")
+
 if __name__ == "__main__":
+
+    load_config();
     shrink_png_by_path("testdir")
 
