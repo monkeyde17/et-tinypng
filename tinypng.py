@@ -1,3 +1,5 @@
+# coding : utf-8
+
 from os.path import dirname
 from urllib2 import Request, urlopen
 from base64 import b64encode
@@ -59,7 +61,7 @@ def shrink_png_by_path(path):
     if os.path.isdir(path):
         print "current path : " + path
         for curfile in os.listdir(path):
-            if curfile.find(".png") != -1:
+            if curfile.find(".png") != -1 or curfile.find(".jpg") != -1:
                 print "the input file : " + path + os.sep + curfile
                 shrink_thread(path, curfile).start()
     else:
