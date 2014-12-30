@@ -9,9 +9,6 @@ import os
 key = "tyaaLBrU4fNVgiUT0b-HBWijI6AqWzuY"
 outputdir = "ettinypng"
 
-inputsize = 0
-outputsize = 0
-
 class shrink_thread(threading.Thread):
     def __init__(self, path, filename):
         threading.Thread.__init__(self)
@@ -42,12 +39,6 @@ class shrink_thread(threading.Thread):
             # get the url
             result = urlopen(rejson["output"]["url"]).read()
 
-            # calculate the size
-            print rejson["input"]["size"]
-            print rejson["output"]["size"]
-            #inputsize = inputsize + rejson["input"]["size"]
-            #outputsize = outputsize + rejson["output"]["size"]
-
             print "The output file : " + outputfile
             open(outputfile, "wb").write(result)
 
@@ -68,10 +59,6 @@ def shrink_png_by_path(path):
             if curfile.find(".png") != -1:
                 print "the input file : " + path + os.sep + curfile
                 shrink_thread(path, curfile).start()
-
-        #print "the input size : " + inputsize
-        #print "the output size : " + outputsize
-        #print "the rate : " + outputsize / inputsize
     else:
         print "The path is invalid"
 
