@@ -7,9 +7,9 @@ import threading
 import os
 
 
-key = "input your key at etiny.cfg"
-
-outputdir = "ettinypng"
+key = ""
+outputdir = ""
+inputdir = ""
 
 class shrink_thread(threading.Thread):
     def __init__(self, path, filename):
@@ -57,6 +57,7 @@ class shrink_thread(threading.Thread):
 
 def shrink_png_by_path(path):
     if os.path.isdir(path):
+        print "current path : " + path
         for curfile in os.listdir(path):
             if curfile.find(".png") != -1:
                 print "the input file : " + path + os.sep + curfile
@@ -67,13 +68,18 @@ def shrink_png_by_path(path):
 def load_config():
     import ConfigParser
     global key
+    global outputdir
+    global inputdir
 
     config = ConfigParser.RawConfigParser()
     config.read("etiny.cfg")
+
     key = config.get("etiny", "key")
+    outputdir = "__" + config.get("etiny", "outputdir")
+    inputdir = config.get("etiny", "inputdir")
 
 if __name__ == "__main__":
 
     load_config();
-    shrink_png_by_path("testdir")
+    shrink_png_by_path(inputdir)
 
