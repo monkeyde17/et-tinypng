@@ -13,6 +13,11 @@ key = ""
 outputdir = ""
 inputdir = ""
 
+filecount = 0
+
+isize = 0
+osize = 0
+
 class shrink_thread(threading.Thread):
     def __init__(self, path, filename):
         threading.Thread.__init__(self)
@@ -36,6 +41,10 @@ class shrink_thread(threading.Thread):
         # http post request
         response = urlopen(request)
 
+        global isize
+        global osize
+        global filecount
+
         if response.getcode() == 201:
             # get the json result
             rejson = json.loads(response.read())
@@ -46,6 +55,9 @@ class shrink_thread(threading.Thread):
             print "The output file : " + outputfile
             open(outputfile, "wb").write(result)
 
+            isize += rejson["input"]["size"]
+            osize += rejson["output"]["size"]
+
         else:
             # Something went wrong! You can parse the JSON body for details.
             print "Error Code : " + response.getcode()
@@ -53,15 +65,25 @@ class shrink_thread(threading.Thread):
 
         # end the thread
         self.thread_stop = True
+
+        filecount = filecount - 1
+
+        if filecount == 0:
+            print "======================================"
+            print "input size : " + str(isize)
+            print "output size : " + str(osize)
+            print "rate : " + str(1.0 * osize / isize)
            
     def stop(self):
         self.thread_stop = True
 
 def shrink_png_by_path(path):
+    global filecount
     if os.path.isdir(path):
         print "current path : " + path
         for curfile in os.listdir(path):
             if curfile.find(".png") != -1 or curfile.find(".jpg") != -1:
+                filecount = filecount + 1
                 print "the input file : " + path + os.sep + curfile
                 shrink_thread(path, curfile).start()
     else:
