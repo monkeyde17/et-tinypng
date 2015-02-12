@@ -7,6 +7,7 @@ from base64 import b64encode
 import json
 import threading
 import os
+import time
 
 
 key = ""
@@ -25,9 +26,9 @@ class shrink_thread(threading.Thread):
         self.path = path
 
     def run(self):
-        tmppath = self.path + os.sep + outputdir
+        tmppath = outputdir + os.sep + self.path 
         if not os.path.isdir(tmppath):
-            os.mkdir(tmppath)
+            os.makedirs(tmppath)
 
         inputfile = self.path + os.sep + self.filename
         outputfile = tmppath + os.sep + self.filename
@@ -82,10 +83,14 @@ def shrink_png_by_path(path):
     if os.path.isdir(path):
         print "current path : " + path
         for curfile in os.listdir(path):
-            if curfile.find(".png") != -1 or curfile.find(".jpg") != -1:
+            nextpath = path + os.sep + curfile
+            if os.path.isdir(nextpath):
+                shrink_png_by_path(nextpath)
+            elif curfile.find(".png") != -1 or curfile.find(".jpg") != -1:
                 filecount = filecount + 1
                 print "the input file : " + path + os.sep + curfile
                 shrink_thread(path, curfile).start()
+                #time.sleep(0.1)
     else:
         print "The path is invalid"
 
@@ -99,8 +104,8 @@ def load_config():
     config.read("etiny.cfg")
 
     key = config.get("etiny", "key")
-    outputdir = "__" + config.get("etiny", "outputdir")
     inputdir = config.get("etiny", "inputdir")
+    outputdir = "__" + config.get("etiny", "outputdir") + "__" + inputdir
 
 if __name__ == "__main__":
 
